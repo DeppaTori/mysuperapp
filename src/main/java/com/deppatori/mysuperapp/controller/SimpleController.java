@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.deppatori.mysuperapp.model.Buah;
 
-@CrossOrigin(origins="http://localhost:3006")
+@CrossOrigin(origins="https://deppatori.github.io")
+//@CrossOrigin(origins="http://localhost:3006")
 @RestController
 @RequestMapping("/simpledata")
 public class SimpleController {
