@@ -27,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
        //  .logoutSuccessUrl("/login")
              .permitAll()
              .and()
+             .cors()
+             .and()
              .exceptionHandling().accessDeniedPage("/access-denied");
 	}
 	
