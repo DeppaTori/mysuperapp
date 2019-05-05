@@ -1,6 +1,7 @@
 package com.deppatori.mysuperapp.configuration;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,11 +13,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		 http
+		 .httpBasic().disable()
+	      .csrf().disable()
          .authorizeRequests()
          .antMatchers("/admin/**").hasAnyRole("ADMIN")
 //         .antMatchers("/user_list").hasRole("USER")
          .antMatchers("/css/**", "/js/**", "/img/**").permitAll()
-             .antMatchers("/","/login","/simpledata").permitAll()
+             .antMatchers("/","/login","/simpledata","/buku/**",
+            		 "/api/v1/produk/**").permitAll()
+             
              .anyRequest().authenticated()
              .and()
          .formLogin()
