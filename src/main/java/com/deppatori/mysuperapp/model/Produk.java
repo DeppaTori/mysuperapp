@@ -5,10 +5,8 @@ import java.math.BigDecimal;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
-public class Produk {
-	@Id
-	private ObjectId _id;
-	
+public class Produk extends BaseModel{
+
 	private String nama;
 	private String deskripsi;
 	private BigDecimal harga;
@@ -20,20 +18,13 @@ public class Produk {
 
 	public Produk(ObjectId _id, String nama, String deskripsi, BigDecimal harga, String gambar) {
 		super();
-		this._id = _id;
+		this.set_id(_id);
 		this.nama = nama;
 		this.deskripsi = deskripsi;
 		this.harga = harga;
 		this.gambar = gambar;
 	}
 
-	public String get_id() {
-		return _id.toHexString();
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
 
 	public String getNama() {
 		return nama;

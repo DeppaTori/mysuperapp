@@ -11,8 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @SpringBootApplication
 public class MysuperappApplication {
 	
-	//private String allowedOriginUrl = "http://localhost:3006";
-	private String allowedOriginUrl = "https://deppatori.github.io";
+	private String allowedOriginUrl = "http://localhost:3006";
+	//private String allowedOriginUrl = "https://deppatori.github.io";
 
 	
 	public static void main(String[] args) {

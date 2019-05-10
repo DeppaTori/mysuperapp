@@ -21,7 +21,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
          .antMatchers("/css/**", "/js/**", "/img/**").permitAll()
              .antMatchers("/","/login","/simpledata","/buku/**",
             		 "/api/v1/produk/**").permitAll()
-             
+             .antMatchers("/api/v1/customers/**").permitAll()  
+             .antMatchers("/api/v1/purchases/**").permitAll() 
+             .antMatchers("/api/v2/purchases/**").permitAll() 
+             .antMatchers("/api/v2/produks/**").permitAll() 
+             .antMatchers("/test/**").permitAll() 
              .anyRequest().authenticated()
              .and()
          .formLogin()
