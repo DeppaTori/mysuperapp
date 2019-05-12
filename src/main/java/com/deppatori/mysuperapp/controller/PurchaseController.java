@@ -35,35 +35,35 @@ public class PurchaseController extends BaseController<Purchase>{
 	@Autowired
 	CustomerService customerService;
 	
-	@PostMapping("/save-with-embedded")
-	public Purchase saveWithEmbeddedData(@RequestBody Purchase purchase) {
-		// find customer
-		ObjectId customer_id = purchase.getCustomer().getId();
-		Customer customer = Optional.ofNullable(customerService.findOne(customer_id))
-				.orElseThrow(()->new ResourceNotFoundException("Customer",customer_id));
-		purchase.setCustomer(customer);
-		
-		if(purchase.getProduks().size()==0) {
-			throw new BadRequestException("No produk");
-		}
-		
-		List<Produk> result = purchase.getProduks().stream().map(produk->{
-			ObjectId produk_id = produk.getId();
-			Produk findProduk = Optional.ofNullable(produkService.findOne(produk_id))
-					.orElseThrow(()->new ResourceNotFoundException("Produk",produk_id));
-			return findProduk;
-			
-		}).collect(Collectors.toList());
-		purchase.setProduks(new HashSet(result));
-		
-		
-		return purchaseService.save(purchase);
-		
-		// find product
-	
-	//	Product product = produkService.findOne(purchase.getProduks());
-		
-		//Purchase purchase = new Purchase();
-		//return purchase;
-	}
+//	@PostMapping("/save-with-embedded")
+//	public Purchase saveWithEmbeddedData(@RequestBody Purchase purchase) {
+//		// find customer
+//		ObjectId customer_id = purchase.getCustomer().getId();
+//		Customer customer = Optional.ofNullable(customerService.findOne(customer_id))
+//				.orElseThrow(()->new ResourceNotFoundException("Customer",customer_id));
+//		purchase.setCustomer(customer);
+//		
+//		if(purchase.getProduks().size()==0) {
+//			throw new BadRequestException("No produk");
+//		}
+//		
+//		List<Produk> result = purchase.getProduks().stream().map(produk->{
+//			ObjectId produk_id = produk.getId();
+//			Produk findProduk = Optional.ofNullable(produkService.findOne(produk_id))
+//					.orElseThrow(()->new ResourceNotFoundException("Produk",produk_id));
+//			return findProduk;
+//			
+//		}).collect(Collectors.toList());
+//		purchase.setProduks(new HashSet(result));
+//		
+//		
+//		return purchaseService.save(purchase);
+//		
+//		// find product
+//	
+//	//	Product product = produkService.findOne(purchase.getProduks());
+//		
+//		//Purchase purchase = new Purchase();
+//		//return purchase;
+//	}
 }

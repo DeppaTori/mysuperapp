@@ -1,13 +1,12 @@
 package com.deppatori.mysuperapp.restservice;
 
-import java.util.HashSet;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -16,17 +15,17 @@ import javax.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
 import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-
-import com.deppatori.mysuperapp.exception.ResourceNotFoundException;
+import com.deppatori.mysuperapp.exception.ExceptionName;
+import com.deppatori.mysuperapp.exception.JerseyResourceNotFoundException;
 import com.deppatori.mysuperapp.model.Customer;
 import com.deppatori.mysuperapp.model.Produk;
 import com.deppatori.mysuperapp.model.Purchase;
+import com.deppatori.mysuperapp.model.PurchaseDetail;
 import com.deppatori.mysuperapp.service.BaseService;
 import com.deppatori.mysuperapp.service.CustomerService;
 import com.deppatori.mysuperapp.service.ProdukService;
+import com.deppatori.mysuperapp.service.PurchaseDetailService;
 import com.deppatori.mysuperapp.service.PurchaseService;
 
 @Service
@@ -42,29 +41,67 @@ public class RestPurchaseService extends RestBaseService<Purchase>{
 	@Autowired
 	ProdukService produkService;
 	
+	@Autowired
+	PurchaseDetailService purchaseDetailService;
+	
+	
+	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@POST
 	@Path("/save-with-embedded")
-	public Purchase saveWithEmbeddedData(Purchase purchase) {
-		// find customer
-		ObjectId customer_id = purchase.getCustomer().getId();
-		Customer customer = Optional.ofNullable(customerService.findOne(customer_id))
-				.orElseThrow(()->new NotFoundException());
-		purchase.setCustomer(customer);
+	public Purchase saveWithEmbeddedData(Purchase purchase)  {
+	
 		
-		if(purchase.getProduks().size()==0) {
-			throw new BadRequestException();
+		
+//		if(purchase.getProduks().size()==0) {
+//			throw new BadRequestException();
+//		}
+//		
+//		List<Produk> result = purchase.getProduks().stream().map(produk->{
+//			ObjectId produk_id = produk.getId();
+//			Produk findProduk = Optional.ofNullable(produkService.findOne(produk_id))
+//					.orElseThrow(()->new BadRequestException());
+//			return findProduk;
+//			
+//		}).collect(Collectors.toList());
+//		purchase.setProduks(new HashSet(result));
+		
+		// check produk terdaftar di database atau gak
+		List<PurchaseDetail> purchaseDetails = purchase.getPurchaseDetails();
+		
+		if(purchaseDetails.size()==0) {
+			throw new JerseyResourceNotFoundException(new ExceptionName("No produk"));
 		}
 		
-		List<Produk> result = purchase.getProduks().stream().map(produk->{
-			ObjectId produk_id = produk.getId();
+		final List<Object> temp = Arrays.asList(new BigDecimal(0),0);
+		
+		List<PurchaseDetail> hasil = purchaseDetails.stream().map(purchaseDetail->{
+			ObjectId produk_id = purchaseDetail.getProduk().getId();
 			Produk findProduk = Optional.ofNullable(produkService.findOne(produk_id))
-					.orElseThrow(()->new NotFoundException());
-			return findProduk;
+					.orElseThrow(()->new JerseyResourceNotFoundException(new ExceptionName("Produk "+produk_id+" not found ")));
+			BigDecimal total =  BigDecimal.valueOf(purchaseDetail.getJumlah()).multiply(findProduk.getHarga());
+			purchaseDetail.setTotal(total);
+			purchaseDetail.setHarga(findProduk.getHarga());
+			purchaseDetail.setProduk(findProduk);
 			
+			temp.set(0,((BigDecimal) (temp.get(0))).add(total));
+			
+			
+			
+			return purchaseDetailService.save(purchaseDetail);
 		}).collect(Collectors.toList());
-		purchase.setProduks(new HashSet(result));
+		purchase.setPurchaseDetails(hasil);
+		purchase.setTotalHarga((BigDecimal)temp.get(0));
+		purchase.setJumlahProduk(hasil.size());
+		
+		
+		
+		// create customer first
+		Customer newCustomer = customerService.save(purchase.getCustomer());
+				
+	    // set customer id after save to db
+		purchase.getCustomer().set_id(newCustomer.getId());
 		
 		
 		return purchaseService.save(purchase);

@@ -1,7 +1,8 @@
 package com.deppatori.mysuperapp.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 public class Purchase extends BaseModel{
 	
@@ -10,7 +11,11 @@ public class Purchase extends BaseModel{
 	
 	private Customer customer;
 	
-	private Set<Produk> produks;
+	private List<PurchaseDetail> purchaseDetails;
+	
+	private BigDecimal totalHarga;
+	private int jumlahProduk;
+	
 	
 	public Purchase() {
 		
@@ -40,15 +45,47 @@ public class Purchase extends BaseModel{
 
 
 
-	public Set<Produk> getProduks() {
-		return produks;
+	public List<PurchaseDetail> getPurchaseDetails() {
+		return purchaseDetails;
 	}
 
 
 
-	public void setProduks(Set<Produk> produks) {
-		this.produks = produks;
+	public void setPurchaseDetails(List<PurchaseDetail> purchaseDetails) {
+		this.purchaseDetails = purchaseDetails;
 	}
+
+
+
+	public BigDecimal getTotalHarga() {
+		return totalHarga;
+	}
+
+
+
+	public void setTotalHarga(BigDecimal totalHarga) {
+		this.totalHarga = totalHarga;
+	}
+
+
+
+	public int getJumlahProduk() {
+		return jumlahProduk;
+	}
+
+
+
+	public void setJumlahProduk(int jumlahProduk) {
+		this.jumlahProduk = jumlahProduk;
+	}
+
+
+	
+	
+
+
+	
+	
 	
 	
 	
