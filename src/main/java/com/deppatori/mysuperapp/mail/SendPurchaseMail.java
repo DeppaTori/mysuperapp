@@ -51,7 +51,7 @@ public class SendPurchaseMail{
 		   Message msg = new MimeMessage(session);
 		   msg.setFrom(new InternetAddress(this.emailAddress, false));
 
-		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(this.emailAddress));
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(purchase.getCustomer().getEmail()));
 		   msg.setSubject("Transaksi di Deppatori Shop");
 		   msg.setContent(this.getMailContent(purchase), "text/html");
 		   msg.setSentDate(new Date());

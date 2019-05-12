@@ -24,7 +24,8 @@ public class MysuperappApplication {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/v1/produk/**").allowedOrigins(allowedOriginUrl);
+                registry.addMapping("/api/v2/produks/**").allowedOrigins(allowedOriginUrl);
+                registry.addMapping("/api/v2/purchases/**").allowedOrigins(allowedOriginUrl);
             }
         };
     }
