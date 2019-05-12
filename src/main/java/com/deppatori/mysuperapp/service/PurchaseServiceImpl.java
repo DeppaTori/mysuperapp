@@ -27,7 +27,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	@Override
 	public Purchase findOne(ObjectId _id) {
 		// TODO Auto-generated method stub
-		return null;
+		return purchaseRepository.findBy_id(_id);
 	}
 
 	@Override
@@ -38,13 +38,17 @@ public class PurchaseServiceImpl implements PurchaseService{
 
 	@Override
 	public Purchase update(ObjectId _id, Purchase t) {
-		// TODO Auto-generated method stub
-		return null;
+		Purchase purchase = purchaseRepository.findBy_id(_id);
+		if(purchase==null) {
+			return null;
+		}
+		t.set_id(_id);
+		return purchaseRepository.save(t);
 	}
 
 	@Override
 	public void delete(ObjectId _id) {
-		// TODO Auto-generated method stub
+		purchaseRepository.deleteById(_id.toHexString());
 		
 	}
 

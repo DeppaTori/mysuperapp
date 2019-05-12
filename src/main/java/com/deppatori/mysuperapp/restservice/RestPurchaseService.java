@@ -1,12 +1,19 @@
 package com.deppatori.mysuperapp.restservice;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.deppatori.mysuperapp.exception.ExceptionName;
 import com.deppatori.mysuperapp.exception.JerseyResourceNotFoundException;
+import com.deppatori.mysuperapp.mail.SendPurchaseMail;
 import com.deppatori.mysuperapp.model.Customer;
 import com.deppatori.mysuperapp.model.Produk;
 import com.deppatori.mysuperapp.model.Purchase;
@@ -44,13 +52,16 @@ public class RestPurchaseService extends RestBaseService<Purchase>{
 	@Autowired
 	PurchaseDetailService purchaseDetailService;
 	
+	@Autowired
+	SendPurchaseMail sendPurchaseMail;
+	
 	
 	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@POST
 	@Path("/save-with-embedded")
-	public Purchase saveWithEmbeddedData(Purchase purchase)  {
+	public Purchase saveWithEmbeddedData(Purchase purchase) throws AddressException,MessagingException,IOException{
 	
 		
 		
@@ -91,9 +102,14 @@ public class RestPurchaseService extends RestBaseService<Purchase>{
 			
 			return purchaseDetailService.save(purchaseDetail);
 		}).collect(Collectors.toList());
+		purchase.setPurchaseDate(new Date());
 		purchase.setPurchaseDetails(hasil);
 		purchase.setTotalHarga((BigDecimal)temp.get(0));
 		purchase.setJumlahProduk(hasil.size());
+		
+	
+		
+		purchase.setPurchaseNo(Long.toString(new Date().getTime()));
 		
 		
 		
@@ -104,10 +120,30 @@ public class RestPurchaseService extends RestBaseService<Purchase>{
 		purchase.getCustomer().set_id(newCustomer.getId());
 		
 		
-		return purchaseService.save(purchase);
+		Purchase newPurchase = purchaseService.save(purchase);
+		
+		sendPurchaseMail.send(newPurchase);
+		
+		return newPurchase;
 		
 	
 	}
+	
+//	@GET
+//	@Path("/mail")
+//	public void sentMail() throws AddressException,MessagingException,IOException{
+//		sendPurchaseMail.send();
+//		
+//	}
+	
+//	@Produces(MediaType.TEXT_HTML)
+//	@GET
+//	@Path("/html")
+//	public String purchaseHtml() {
+//		
+//		Purchase purchase = purchaseService.findOne(new ObjectId("5cd7af9677e8f2278454d68f"));
+//		return sendPurchaseMail.getMailContent(purchase);
+//	}
 
 	@Override
 	public BaseService<Purchase> getService() {

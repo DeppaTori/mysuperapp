@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Purchase extends BaseModel{
 	
+	private String purchaseNo;
 	
 	private Date purchaseDate;
 	
@@ -78,6 +79,20 @@ public class Purchase extends BaseModel{
 	public void setJumlahProduk(int jumlahProduk) {
 		this.jumlahProduk = jumlahProduk;
 	}
+
+
+
+	public String getPurchaseNo() {
+		return purchaseNo;
+	}
+
+
+
+	public void setPurchaseNo(String purchaseNo) {
+		this.purchaseNo = purchaseNo;
+	}
+	
+	
 
 
 	
