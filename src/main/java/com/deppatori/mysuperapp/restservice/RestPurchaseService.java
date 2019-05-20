@@ -122,6 +122,7 @@ public class RestPurchaseService extends RestBaseService<Purchase>{
 		
 		Purchase newPurchase = purchaseService.save(purchase);
 		
+		/*SEND EMAIL*/
 		sendPurchaseMail.send(newPurchase);
 		
 		return newPurchase;

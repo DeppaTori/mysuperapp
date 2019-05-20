@@ -2,10 +2,7 @@ package com.deppatori.mysuperapp.restservice;
 
 import java.util.Set;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.bson.types.ObjectId;
@@ -28,6 +25,28 @@ public abstract class RestBaseService<T extends BaseModel> {
 	@Path("/{id}")
 	public T getOne(@PathParam("id") ObjectId id) {
 		return getService().findOne(id);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public T create(T t){
+		return getService().save(t);
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public T update(@PathParam("id") ObjectId id,T t){
+		return getService().update(id,t);
+	}
+
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public void delete(@PathParam("id") ObjectId id){
+		getService().delete(id);
 	}
 	
 	public abstract BaseService<T> getService();
